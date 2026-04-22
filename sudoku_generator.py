@@ -146,6 +146,37 @@ class Cell:
     def draw(self):
         pass
 
+class Board():
+    def __init__(self, width, height, screen. difficulty):
+        self.width = width
+        self.height = height
+        self.screen = screen
+        self.difficulty = difficulty
+
+    def draw(self):
+        pass
+
+    def select(self, row, col):
+        pass
+
+    def click(self, x, y):
+        pass
+
+    def clear(self):
+        pass
+
+    def sketch(self, value):
+        pass
+
+    def place_number(self, value):
+        pass
+
+    def reset_to_original(self):
+        pass
+
+    def is_full(self):
+        pass
+
 '''
 DO NOT CHANGE
 Provided for students
