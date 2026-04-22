@@ -11,7 +11,7 @@ class SudokuGenerator:
         self.row_length = row_length
         self.cells_to_remove = removed_cells
         self.box_length = int(row_length ** 0.5)
-        self.board = [["_"] * row_length for _ in range(row_length)]
+        self.board = [["0"] * row_length for _ in range(row_length)]
 
     def get_board(self):
         return self.board
@@ -35,8 +35,8 @@ class SudokuGenerator:
         return True
 
     def valid_in_box(self, row_start, col_start, num):
-        for i in range(row_start, row_start + 3):
-            for j in range(col_start, col_start + 3):
+        for i in range(row_start, row_start + self.box_length):
+            for j in range(col_start, col_start + self.box_length):
                 if (self.board[i][j] == num):
                     return False
         return True
@@ -53,8 +53,8 @@ class SudokuGenerator:
 
     def fill_box(self, row_start, col_start):
         num = random.randint(1, 9)
-        for i in range(row_start, row_start + 3):
-            for j in range(col_start, col_start + 3):
+        for i in range(row_start, row_start + self.box_length):
+            for j in range(col_start, col_start + self.box_length):
                 while (not self.is_valid(i, j, num)):
                     num = random.randint(1, 9)
                 self.board[i][j] = num
@@ -126,6 +126,26 @@ class SudokuGenerator:
                 k = random.randint(0, 8)
             self.board[j][k] = 0
 
+class Cell:
+    def __init__(self, value, row, col, screen):
+        self.value = value
+        self.row = row
+        self.col = col
+        self.screen = screen
+
+        self.sketched_value = 0
+        self.selected = False
+        self.original = (value != 0)
+
+    def set_cell_value(self, value):
+        self.value = value
+
+    def set_sketched_value(self, value):
+        self.sketched_value = value
+
+    def draw(self):
+        pass
+
 '''
 DO NOT CHANGE
 Provided for students
@@ -141,7 +161,6 @@ removed is the number of cells to clear (set to 0)
 
 Return: list[list] (a 2D Python list to represent the board)
 '''
-
 
 def generate_sudoku(size, removed):
     sudoku = SudokuGenerator(size, removed)
