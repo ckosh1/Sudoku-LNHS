@@ -146,8 +146,8 @@ class Cell:
     def draw(self):
         pass
 
-class Board():
-    def __init__(self, width, height, screen. difficulty):
+class Board:
+    def __init__(self, width, height, screen, difficulty):
         self.width = width
         self.height = height
         self.screen = screen
