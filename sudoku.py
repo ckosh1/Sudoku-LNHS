@@ -48,8 +48,6 @@ while running:
                     state = "game"
 
         elif state == "game":
-
-
             if event.type == pygame.MOUSEBUTTONDOWN:
 
                 if reset_button.collidepoint(event.pos):
@@ -69,11 +67,7 @@ while running:
                     if clicked:
                         board.select(clicked[0], clicked[1])
 
-
-
             if event.type == pygame.KEYDOWN:
-
-                # NUMBER INPUT (SKETCH)
                 if event.key == pygame.K_1:
                     board.sketch(1)
                 if event.key == pygame.K_2:
@@ -156,7 +150,5 @@ while running:
                 running = False
 
     pygame.display.update()
-
-
 
 pygame.quit()
