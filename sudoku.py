@@ -60,11 +60,11 @@ while running:
                 if reset_button.collidepoint(event.pos):
                     board.reset_to_original()
 
-                elif restart_button.collidepoint(event.pos) or end_restart_button.collidepoint(event.pos):
+                elif restart_button.collidepoint(event.pos):
                     state = "menu"
                     board = None
 
-                elif exit_button.collidepoint(event.pos) or end_exit_button.collidepoint(event.pos):
+                elif exit_button.collidepoint(event.pos):
                     running = False
 
                 else:
@@ -78,6 +78,7 @@ while running:
 
             if event.type == pygame.KEYDOWN:
 
+                # NUMBER INPUT (SKETCH)
                 if event.key == pygame.K_1:
                     board.sketch(1)
                 if event.key == pygame.K_2:
@@ -126,6 +127,21 @@ while running:
                     if cell and cell.row < 8:
                         board.select(cell.row + 1, cell.col)
 
+        elif state == "win":
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+
+                if end_exit_button.collidepoint(event.pos):
+                    running = False
+
+        elif state =="lose":
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if end_restart_button.collidepoint(event.pos):
+                    state = "menu"
+                    board = None
+
+
     if state == "menu":
 
         screen.blit(title_font.render("Welcome to Sudoku",True,(0,0,0)),(40,100))
@@ -156,15 +172,32 @@ while running:
 
         if board.is_full():
             if board.check_board():
-                screen.fill((255,255,255))
-                screen.blit(title_font.render("YOU WIN!", True, (0, 0, 0)), (150, 100))
-                pygame.draw.rect(screen, (255, 165, 0), end_exit_button)
-                screen.blit(font.render("Exit", True, (0, 0, 0)), (265, 310))
+                state = "win"
             else:
-                screen.fill((255, 255, 255))
-                screen.blit(title_font.render("GAME OVER :(", True, (0, 0, 0)), (100, 100))
-                pygame.draw.rect(screen, (255, 165, 0), end_restart_button)
-                screen.blit(font.render("Restart", True, (0, 0, 0)), (265, 310))
+                state = "lose"
+
+    elif state == "win":
+        screen.fill((255, 255, 255))
+        screen.blit(title_font.render("YOU WIN!", True, (0, 0, 0)), (120, 150))
+
+        pygame.draw.rect(screen, (255, 165, 0), end_exit_button)
+        screen.blit(font.render("Exit", True, (0, 0, 0)), (250, 310))
+
+
+    elif state == "lose":
+        screen.fill((255, 255, 255))
+        screen.blit(title_font.render("GAME OVER :(", True, (0, 0, 0)), (60, 150))
+
+        pygame.draw.rect(screen, (255, 165, 0), end_restart_button)
+        screen.blit(font.render("Restart", True, (0, 0, 0)), (250, 310))
+
+
+
+
+
 
     pygame.display.update()
+
+
+
 pygame.quit()
