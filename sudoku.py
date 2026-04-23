@@ -157,12 +157,12 @@ while running:
         if board.is_full():
             if board.check_board():
                 screen.fill((255,255,255))
-                screen.blit(title_font.render("YOU WIN!", True, (0, 0, 0)), (40, 100))
+                screen.blit(title_font.render("YOU WIN!", True, (0, 0, 0)), (60, 100))
                 pygame.draw.rect(screen, (255, 165, 0), end_exit_button)
                 screen.blit(font.render("Exit", True, (0, 0, 0)), (265, 310))
             else:
                 screen.fill((255, 255, 255))
-                screen.blit(title_font.render("GAME OVER :(", True, (0, 0, 0)), (40, 100))
+                screen.blit(title_font.render("GAME OVER :(", True, (0, 0, 0)), (60, 100))
                 pygame.draw.rect(screen, (255, 165, 0), end_restart_button)
                 screen.blit(font.render("Restart", True, (0, 0, 0)), (265, 310))
 
