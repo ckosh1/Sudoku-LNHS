@@ -58,6 +58,28 @@ while running:
                 board.clear()
             if event.key == pygame.K_r:
                 board.reset_to_original()
+                
+            if event.key == pygame.K_LEFT:
+                cell = board.get_selected()
+                if cell:
+                    board.select(cell.row,cell.col -1)
+
+            if event.key == pygame.K_RIGHT:
+                cell = board.get_selected()
+                if cell:
+                    board.select(cell.row,cell.col +1)
+
+            if event.key == pygame.K_UP:
+                cell = board.get_selected()
+                if cell:
+                    board.select(cell.row-1,cell.col)
+
+            if event.key == pygame.K_DOWN:
+                cell = board.get_selected()
+                if cell:
+                    board.select(cell.row+1,cell.col)
+
+
 
     board.draw()
     if board.is_full():
