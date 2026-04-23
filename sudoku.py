@@ -10,15 +10,20 @@ pygame.display.set_caption("Sudoku")
 
 state = "menu"
 
-easy_button = pygame.Rect(170,200,200,50)
-medium_button = pygame.Rect(170,270,200,50)
-hard_button = pygame.Rect(170,340,200,50)
+easy_button = pygame.Rect(170,300,200,50)
+medium_button = pygame.Rect(170,370,200,50)
+hard_button = pygame.Rect(170,440,200,50)
 
-reset_button = pygame.Rect(70,530,100,50)
-restart_button = pygame.Rect(200,530,100,50)
-exit_button = pygame.Rect(330,530,100,50)
+reset_button = pygame.Rect(70,550,100,50)
+restart_button = pygame.Rect(200,550,100,50)
+exit_button = pygame.Rect(330,550,100,50)
+
+end_restart_button = pygame.Rect(240,300,100,50)
+end_exit_button = pygame.Rect(240,300,100,50)
 
 font = pygame.font.SysFont("Arial", 20)
+title_font = pygame.font.SysFont("Comic Sans", 50)
+game_font = pygame.font.SysFont("Comic Sans", 40)
 
 running = True
 selected = None
@@ -48,16 +53,18 @@ while running:
                     state = "game"
 
         elif state == "game":
+
+
             if event.type == pygame.MOUSEBUTTONDOWN:
 
                 if reset_button.collidepoint(event.pos):
                     board.reset_to_original()
 
-                elif restart_button.collidepoint(event.pos):
+                elif restart_button.collidepoint(event.pos) or end_restart_button.collidepoint(event.pos):
                     state = "menu"
                     board = None
 
-                elif exit_button.collidepoint(event.pos):
+                elif exit_button.collidepoint(event.pos) or end_exit_button.collidepoint(event.pos):
                     running = False
 
                 else:
@@ -67,7 +74,11 @@ while running:
                     if clicked:
                         board.select(clicked[0], clicked[1])
 
+
+
             if event.type == pygame.KEYDOWN:
+
+                # NUMBER INPUT (SKETCH)
                 if event.key == pygame.K_1:
                     board.sketch(1)
                 if event.key == pygame.K_2:
@@ -118,13 +129,16 @@ while running:
 
     if state == "menu":
 
+        screen.blit(title_font.render("Welcome to Sudoku",True,(0,0,0)),(40,100))
+        screen.blit(game_font.render("Select Game Mode:",True,(0,0,0)),(100,200))
+
         pygame.draw.rect(screen, (255,165,0), easy_button)
         pygame.draw.rect(screen, (255,165,0), medium_button)
         pygame.draw.rect(screen, (255,165,0), hard_button)
 
-        screen.blit(font.render("Easy",True,(255,255,255)),(240,200))
-        screen.blit(font.render("Medium", True, (255, 255, 255)), (240, 280))
-        screen.blit(font.render("Hard", True, (255, 255, 255)), (240, 360))
+        screen.blit(font.render("Easy",True,(255,255,255)),(240,310))
+        screen.blit(font.render("Medium", True, (255, 255, 255)), (240, 380))
+        screen.blit(font.render("Hard", True, (255, 255, 255)), (240, 450))
 
 
     elif state == "game":
@@ -132,23 +146,30 @@ while running:
         board.draw()
 
         pygame.draw.rect(screen, (255,165,0), reset_button)
-        screen.blit(font.render("Reset",True,(0,0,0)),(95,540))
+        screen.blit(font.render("Reset",True,(0,0,0)),(95,560))
 
         pygame.draw.rect(screen, (255, 165, 0), restart_button)
-        screen.blit(font.render("Restart", True, (0, 0, 0)), (225, 540))
+        screen.blit(font.render("Restart", True, (0, 0, 0)), (225, 560))
 
         pygame.draw.rect(screen, (255, 165, 0), exit_button)
-        screen.blit(font.render("Exit", True, (0, 0, 0)), (355, 540))
+        screen.blit(font.render("Exit", True, (0, 0, 0)), (355, 560))
 
 
         if board.is_full():
             if board.check_board():
-                print("YOU WIN!")
-                running = False
+                screen.fill((255,255,255))
+                screen.blit(title_font.render("YOU WIN!", True, (0, 0, 0)), (40, 100))
+                pygame.draw.rect(screen, (255, 165, 0), end_exit_button)
+                screen.blit(font.render("Exit", True, (0, 0, 0)), (265, 310))
             else:
-                print("Game Over (Incorrect Solution)")
-                running = False
+                screen.fill((255, 255, 255))
+                screen.blit(title_font.render("GAME OVER :(", True, (0, 0, 0)), (40, 100))
+                pygame.draw.rect(screen, (255, 165, 0), end_restart_button)
+                screen.blit(font.render("Restart", True, (0, 0, 0)), (265, 310))
+
 
     pygame.display.update()
+
+
 
 pygame.quit()
