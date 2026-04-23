@@ -167,5 +167,4 @@ while running:
                 screen.blit(font.render("Restart", True, (0, 0, 0)), (265, 310))
 
     pygame.display.update()
-
 pygame.quit()
