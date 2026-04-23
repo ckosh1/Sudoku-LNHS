@@ -78,7 +78,6 @@ while running:
 
             if event.type == pygame.KEYDOWN:
 
-                # NUMBER INPUT (SKETCH)
                 if event.key == pygame.K_1:
                     board.sketch(1)
                 if event.key == pygame.K_2:
