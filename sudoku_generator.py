@@ -1,4 +1,6 @@
 import math, random
+import pygame
+#using pygame-ce since it is supported on 3.14
 
 """
 This was adapted from a GeeksforGeeks article "Program for Sudoku Generator" by Aarti_Rathi and Ankur Trisal
@@ -11,7 +13,7 @@ class SudokuGenerator:
         self.row_length = row_length
         self.cells_to_remove = removed_cells
         self.box_length = int(row_length ** 0.5)
-        self.board = [["0"] * row_length for _ in range(row_length)]
+        self.board = [[0] * row_length for _ in range(row_length)]
 
     def get_board(self):
         return self.board
@@ -52,12 +54,13 @@ class SudokuGenerator:
         )
 
     def fill_box(self, row_start, col_start):
-        num = random.randint(1, 9)
-        for i in range(row_start, row_start + self.box_length):
-            for j in range(col_start, col_start + self.box_length):
-                while (not self.is_valid(i, j, num)):
-                    num = random.randint(1, 9)
-                self.board[i][j] = num
+        nums = list(range(1, 10))
+        random.shuffle(nums)
+        idx = 0
+        for i in range(3):
+            for j in range(3):
+                self.board[row_start + i][col_start + j] = nums[idx]
+                idx += 1
 
     def fill_diagonal(self):
         self.fill_box(0,0)
@@ -144,7 +147,123 @@ class Cell:
         self.sketched_value = value
 
     def draw(self):
-        pass
+        cell_size = 60
+        x = self.col * cell_size
+        y = self.row * cell_size
+
+        font = pygame.font.Font(None, 40)
+        sketch_font = pygame.font.Font(None, 20)
+
+        if self.value != 0:
+            text = font.render(str(self.value), True, (0, 0, 0))
+            self.screen.blit(text, (x + 20, y + 10))
+
+        elif self.sketched_value != 0:
+            text = sketch_font.render(str(self.sketched_value), True, (128, 128, 128))
+            self.screen.blit(text, (x + 5, y + 5))
+
+        if self.selected:
+            pygame.draw.rect(self.screen, (255, 0, 0), (x, y, cell_size, cell_size), 3)
+
+class Board:
+    def __init__(self, width, height, screen, difficulty):
+        self.width = width
+        self.height = height
+        self.screen = screen
+
+        if difficulty == "easy":
+            removed = 30
+        elif difficulty == "medium":
+            removed = 40
+        else:
+            removed = 50
+
+        self.board, self.solution = generate_sudoku(9, removed)
+        self.cells = [
+            [Cell(self.board[r][c], r, c, screen) for c in range(9)]
+            for r in range(9)
+        ]
+
+        self.selected = None
+
+    def draw(self):
+        for row in self.cells:
+            for cell in row:
+                cell.draw()
+
+    def select(self, row, col):
+        for r in self.cells:
+            for cell in r:
+                cell.selected = False
+
+        self.cells[row][col].selected = True
+        self.selected = (row, col)
+
+    def get_selected(self):
+        if self.selected:
+            r, c = self.selected
+            return self.cells[r][c]
+        return None
+
+    def click(self, x, y):
+        cell_size = self.width // 9
+
+        if x < self.width and y < self.height:
+            row = y // cell_size
+            col = x // cell_size
+            return (row, col)
+        return None
+
+    def sketch(self, value):
+        cell = self.get_selected()
+        if cell and not cell.original:
+            cell.set_sketched_value(value)
+
+    def place_number(self, value):
+        cell = self.get_selected()
+        if cell and not cell.original:
+            cell.set_cell_value(value)
+            cell.set_sketched_value(0)
+            self.update_board()
+
+    def clear(self):
+        cell = self.get_selected()
+        if cell and not cell.original:
+            cell.set_cell_value(0)
+            cell.set_sketched_value(0)
+
+    def reset_to_original(self):
+        for r in range(9):
+            for c in range(9):
+                if not self.cells[r][c].original:
+                    self.cells[r][c].set_cell_value(0)
+                    self.cells[r][c].set_sketched_value(0)
+
+    def is_full(self):
+        for row in self.cells:
+            for cell in row:
+                if cell.value == 0:
+                    return False
+        return True
+
+    def update_board(self):
+        for r in range(9):
+            for c in range(9):
+                self.board[r][c] = self.cells[r][c].value
+
+    def find_empty(self):
+        for r in range(9):
+            for c in range(9):
+                if self.cells[r][c].value == 0:
+                    return (r, c)
+        return None
+
+    def check_board(self):
+        for r in range(9):
+            for c in range(9):
+                if self.cells[r][c].value != self.solution[r][c]:
+                    return False
+        return True
 
 '''
 DO NOT CHANGE
@@ -165,7 +284,7 @@ Return: list[list] (a 2D Python list to represent the board)
 def generate_sudoku(size, removed):
     sudoku = SudokuGenerator(size, removed)
     sudoku.fill_values()
-    board = sudoku.get_board()
+    solution = [row[:] for row in sudoku.get_board()]  # deep copy
     sudoku.remove_cells()
     board = sudoku.get_board()
-    return board
+    return board, solution
